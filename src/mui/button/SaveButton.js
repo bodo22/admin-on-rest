@@ -7,22 +7,43 @@ import ContentSave from 'material-ui/svg-icons/content/save';
 import CircularProgress from 'material-ui/CircularProgress';
 import translate from '../../i18n/translate';
 
-class SaveButton extends Component {
-
-    handleClick = (e) => {
+export class SaveButton extends Component {
+    handleClick = e => {
         if (this.props.saving) {
             // prevent double submission
             e.preventDefault();
+        } else {
+            // always submit form explicitly regardless of button type
+            const { handleSubmitWithRedirect, redirect } = this.props;
+            if (e) {
+                e.preventDefault();
+            }
+            handleSubmitWithRedirect(redirect)();
         }
-    }
+    };
 
     render() {
-        const { saving, label = 'aor.action.save', raised = true, translate } = this.props;
-        return raised
-            ? <RaisedButton
-                type="submit"
+        const {
+            saving,
+            label = 'aor.action.save',
+            raised = true,
+            translate,
+            submitOnEnter,
+            redirect,
+        } = this.props;
+        const type = submitOnEnter ? 'submit' : 'button';
+        const ButtonComponent = raised ? RaisedButton : FlatButton;
+        return (
+            <ButtonComponent
+                type={type}
                 label={label && translate(label)}
-                icon={saving ? <CircularProgress size={25} thickness={2} /> : <ContentSave />}
+                icon={
+                    saving && saving.redirect === redirect ? (
+                        <CircularProgress size={25} thickness={2} />
+                    ) : (
+                        <ContentSave />
+                    )
+                }
                 onClick={this.handleClick}
                 primary={!saving}
                 style={{
@@ -30,26 +51,22 @@ class SaveButton extends Component {
                     position: 'relative',
                 }}
             />
-            : <FlatButton
-                type="submit"
-                label={label && translate(label)}
-                icon={saving ? <CircularProgress size={25} thickness={2} /> : <ContentSave />}
-                onClick={this.handleClick}
-                primary={!saving}
-                style={{
-                    margin: '10px 24px',
-                    position: 'relative',
-                }}
-            />
-        ;
+        );
     }
 }
 
 SaveButton.propTypes = {
     label: PropTypes.string,
     raised: PropTypes.bool,
-    saving: PropTypes.bool,
+    saving: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
     translate: PropTypes.func.isRequired,
+    submitOnEnter: PropTypes.bool,
+    handleSubmitWithRedirect: PropTypes.func,
+    redirect: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+};
+
+SaveButton.defaultProps = {
+    handleSubmitWithRedirect: () => () => {},
 };
 
 const mapStateToProps = state => ({

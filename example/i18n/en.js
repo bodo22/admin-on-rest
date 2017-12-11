@@ -8,6 +8,7 @@ export const messages = {
                 body: 'Body',
                 comments: 'Comments',
                 commentable: 'Commentable',
+                commentable_short: 'Com.',
                 created_at: 'Created at',
                 notifications: 'Notifications recipients',
                 nb_view: 'Nb views',
@@ -15,8 +16,9 @@ export const messages = {
                 pictures: 'Related Pictures',
                 published_at: 'Published at',
                 teaser: 'Teaser',
+                tags: 'Tags',
                 title: 'Title',
-                views: 'Vues',
+                views: 'Views',
             },
         },
         comments: {
@@ -28,6 +30,13 @@ export const messages = {
                 author: {
                     name: 'Author',
                 },
+            },
+        },
+        users: {
+            name: 'User |||| Users',
+            fields: {
+                name: 'Name',
+                role: 'Role',
             },
         },
     },
@@ -44,10 +53,30 @@ export const messages = {
         edit: {
             title: 'Post "%{title}"',
         },
+        action: {
+            save_and_add: 'Save and Add',
+            save_and_show: 'Save and Show',
+        },
     },
     comment: {
         list: {
             about: 'About',
+        },
+    },
+    user: {
+        list: {
+            search: 'Search',
+        },
+        form: {
+            summary: 'Summary',
+            security: 'Security',
+        },
+        edit: {
+            title: 'User "%{title}"',
+        },
+        action: {
+            save_and_add: 'Save and Add',
+            save_and_show: 'Save and Show',
         },
     },
 };

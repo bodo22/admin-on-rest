@@ -11,6 +11,7 @@ export default {
             refresh: 'Refresh',
             add_filter: 'Add filter',
             remove_filter: 'Remove this filter',
+            back: 'Go Back',
         },
         boolean: {
             true: 'Yes',
@@ -23,18 +24,28 @@ export default {
             create: 'Create %{name}',
             delete: 'Delete %{name} #%{id}',
             dashboard: 'Dashboard',
+            not_found: 'Not Found',
         },
         input: {
-            image: {
-                upload_several: 'Drop some files to upload, or click to select one.',
+            file: {
+                upload_several:
+                    'Drop some files to upload, or click to select one.',
                 upload_single: 'Drop a file to upload, or click to select it.',
+            },
+            image: {
+                upload_several:
+                    'Drop some pictures to upload, or click to select one.',
+                upload_single:
+                    'Drop a picture to upload, or click to select it.',
             },
         },
         message: {
             yes: 'Yes',
             no: 'No',
-            are_you_sure: 'Are you sure ?',
+            are_you_sure: 'Are you sure?',
             about: 'About',
+            not_found:
+                'Either you typed a wrong URL, or you followed a bad link.',
         },
         navigation: {
             no_results: 'No results found',

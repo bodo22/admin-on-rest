@@ -3,7 +3,15 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import LinearProgress from 'material-ui/LinearProgress';
 import { crudGetManyReference as crudGetManyReferenceAction } from '../../actions/dataActions';
-import { getIds, getReferences, nameRelatedTo } from '../../reducer/references/oneToMany';
+import {
+    getIds,
+    getReferences,
+    nameRelatedTo,
+} from '../../reducer/admin/references/oneToMany';
+import {
+    SORT_ASC,
+    SORT_DESC,
+} from '../../reducer/admin/resource/list/queryReducer';
 
 /**
  * Render related records to the current one.
@@ -52,6 +60,11 @@ import { getIds, getReferences, nameRelatedTo } from '../../reducer/references/o
  * </ReferenceManyField>
  */
 export class ReferenceManyField extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { sort: props.sort };
+    }
+
     componentDidMount() {
         this.fetchReferences();
     }
@@ -62,17 +75,52 @@ export class ReferenceManyField extends Component {
         }
     }
 
-    fetchReferences({ reference, record, resource, target, perPage, sort, filter } = this.props) {
+    setSort = field => {
+        const order =
+            this.state.sort.field === field &&
+            this.state.sort.order === SORT_ASC
+                ? SORT_DESC
+                : SORT_ASC;
+        this.setState({ sort: { field, order } }, this.fetchReferences);
+    };
+
+    fetchReferences(
+        { reference, record, resource, target, perPage, filter } = this.props
+    ) {
         const { crudGetManyReference } = this.props;
         const pagination = { page: 1, perPage };
-        const relatedTo = nameRelatedTo(reference, record.id, resource, target);
-        crudGetManyReference(reference, target, record.id, relatedTo, pagination, sort, filter);
+        const relatedTo = nameRelatedTo(
+            reference,
+            record.id,
+            resource,
+            target,
+            filter
+        );
+        crudGetManyReference(
+            reference,
+            target,
+            record.id,
+            relatedTo,
+            pagination,
+            this.state.sort,
+            filter
+        );
     }
 
     render() {
-        const { resource, reference, data, ids, children, basePath } = this.props;
+        const {
+            resource,
+            reference,
+            data,
+            ids,
+            children,
+            basePath,
+            isLoading,
+        } = this.props;
         if (React.Children.count(children) !== 1) {
-            throw new Error('<ReferenceManyField> only accepts a single child (like <Datagrid>)');
+            throw new Error(
+                '<ReferenceManyField> only accepts a single child (like <Datagrid>)'
+            );
         }
         if (typeof ids === 'undefined') {
             return <LinearProgress style={{ marginTop: '1em' }} />;
@@ -82,8 +130,10 @@ export class ReferenceManyField extends Component {
             resource: reference,
             ids,
             data,
+            isLoading,
             basePath: referenceBasePath,
-            currentSort: {},
+            currentSort: this.state.sort,
+            setSort: this.setSort,
         });
     }
 }
@@ -107,6 +157,7 @@ ReferenceManyField.propTypes = {
     }),
     source: PropTypes.string.isRequired,
     target: PropTypes.string.isRequired,
+    isLoading: PropTypes.bool,
 };
 
 ReferenceManyField.defaultProps = {
@@ -117,10 +168,17 @@ ReferenceManyField.defaultProps = {
 };
 
 function mapStateToProps(state, props) {
-    const relatedTo = nameRelatedTo(props.reference, props.record.id, props.resource, props.target);
+    const relatedTo = nameRelatedTo(
+        props.reference,
+        props.record.id,
+        props.resource,
+        props.target,
+        props.filter
+    );
     return {
         data: getReferences(state, props.reference, relatedTo),
         ids: getIds(state, relatedTo),
+        isLoading: state.admin.loading > 0,
     };
 }
 

@@ -18,32 +18,39 @@ import FieldTitle from '../../util/FieldTitle';
  * The object passed as `options` props is passed to the material-ui <TextField> component
  */
 export class TextInput extends Component {
-    handleBlur = (eventOrValue) => {
+    handleBlur = eventOrValue => {
         this.props.onBlur(eventOrValue);
         this.props.input.onBlur(eventOrValue);
-    }
+    };
 
-    handleFocus = (event) => {
+    handleFocus = event => {
         this.props.onFocus(event);
         this.props.input.onFocus(event);
-    }
+    };
 
-    handleChange = (eventOrValue) => {
+    handleChange = eventOrValue => {
         this.props.onChange(eventOrValue);
         this.props.input.onChange(eventOrValue);
-    }
+    };
 
     render() {
         const {
             elStyle,
             input,
+            isRequired,
             label,
-            meta: { touched, error },
+            meta,
             options,
             resource,
             source,
             type,
         } = this.props;
+        if (typeof meta === 'undefined') {
+            throw new Error(
+                "The TextInput component wasn't called within a redux-form <Field>. Did you decorate it and forget to add the addField prop to your component? See https://marmelab.com/admin-on-rest/Inputs.html#writing-your-own-input-component for details."
+            );
+        }
+        const { touched, error } = meta;
 
         return (
             <TextField
@@ -52,7 +59,14 @@ export class TextInput extends Component {
                 onFocus={this.handleFocus}
                 onChange={this.handleChange}
                 type={type}
-                floatingLabelText={<FieldTitle label={label} source={source} resource={resource} />}
+                floatingLabelText={
+                    <FieldTitle
+                        label={label}
+                        source={source}
+                        resource={resource}
+                        isRequired={isRequired}
+                    />
+                }
                 errorText={touched && error}
                 style={elStyle}
                 {...options}
@@ -65,6 +79,7 @@ TextInput.propTypes = {
     addField: PropTypes.bool.isRequired,
     elStyle: PropTypes.object,
     input: PropTypes.object,
+    isRequired: PropTypes.bool,
     label: PropTypes.string,
     meta: PropTypes.object,
     name: PropTypes.string,
@@ -75,10 +90,6 @@ TextInput.propTypes = {
     resource: PropTypes.string,
     source: PropTypes.string,
     type: PropTypes.string,
-    validate: PropTypes.oneOfType([
-        PropTypes.func,
-        PropTypes.arrayOf(PropTypes.func)
-    ]),
 };
 
 TextInput.defaultProps = {

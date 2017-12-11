@@ -1,4 +1,11 @@
-import { put, call, cancelled, takeEvery, takeLatest } from 'redux-saga/effects';
+import {
+    all,
+    put,
+    call,
+    cancelled,
+    takeEvery,
+    takeLatest,
+} from 'redux-saga/effects';
 import {
     FETCH_START,
     FETCH_END,
@@ -6,15 +13,15 @@ import {
     FETCH_CANCEL,
 } from '../../actions/fetchActions';
 
-const crudFetch = (restClient) => {
+const crudFetch = restClient => {
     function* handleFetch(action) {
         const { type, payload, meta: { fetch: fetchMeta, ...meta } } = action;
         const restType = fetchMeta;
 
-        yield [
+        yield all([
             put({ type: `${type}_LOADING`, payload, meta }),
             put({ type: FETCH_START }),
-        ];
+        ]);
         let response;
         try {
             response = yield call(restClient, restType, meta.resource, payload);
@@ -25,15 +32,24 @@ const crudFetch = (restClient) => {
                 type: `${type}_SUCCESS`,
                 payload: response,
                 requestPayload: payload,
-                meta: { ...meta, fetchResponse: restType, fetchStatus: FETCH_END },
+                meta: {
+                    ...meta,
+                    fetchResponse: restType,
+                    fetchStatus: FETCH_END,
+                },
             });
             yield put({ type: FETCH_END });
         } catch (error) {
             yield put({
                 type: `${type}_FAILURE`,
                 error: error.message ? error.message : error,
+                payload: error.body ? error.body : null,
                 requestPayload: payload,
-                meta: { ...meta, fetchResponse: restType, fetchStatus: FETCH_ERROR },
+                meta: {
+                    ...meta,
+                    fetchResponse: restType,
+                    fetchStatus: FETCH_ERROR,
+                },
             });
             yield put({ type: FETCH_ERROR, error });
         } finally {
@@ -45,12 +61,23 @@ const crudFetch = (restClient) => {
     }
 
     return function* watchCrudFetch() {
-        yield [
-            takeLatest(action => action.meta && action.meta.fetch && action.meta.cancelPrevious, handleFetch),
-            takeEvery(action => action.meta && action.meta.fetch && !action.meta.cancelPrevious, handleFetch),
-        ];
+        yield all([
+            takeLatest(
+                action =>
+                    action.meta &&
+                    action.meta.fetch &&
+                    action.meta.cancelPrevious,
+                handleFetch
+            ),
+            takeEvery(
+                action =>
+                    action.meta &&
+                    action.meta.fetch &&
+                    !action.meta.cancelPrevious,
+                handleFetch
+            ),
+        ]);
     };
 };
-
 
 export default crudFetch;

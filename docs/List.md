@@ -246,7 +246,7 @@ export const PostList = (props) => (
 
 ## The `<Datagrid>` component
 
-The datagrid component renders a list of records as a table. It is usually used as a child of the [`<List>`](#the-list-component) and [`<ReferenceManyField>`](./Fields.html#referencemanyfield) components.
+The datagrid component renders a list of records as a table. It is usually used as a child of the [`<List>`](#the-list-component) and [`<ReferenceManyField>`](./Fields.md#referencemanyfield) components.
 
 Here are all the props accepted by the component:
 
@@ -262,7 +262,7 @@ It renders as many columns as it receives `<Field>` children.
 ```jsx
 // in src/posts.js
 import React from 'react';
-import { List, Datagrid, TextField } from 'admin-on-rest';
+import { List, Datagrid, TextField, EditButton } from 'admin-on-rest';
 
 export const PostList = (props) => (
     <List {...props}>
@@ -326,7 +326,7 @@ export const PostList = (props) => (
 ```
 {% endraw %}
 
-**Tip**: if you want to go even further and apply a custom style cell by cell, check out the [Conditional Formatting section of the Theming chapter](./Theming.html#conditional-formatting.)
+**Tip**: if you want to go even further and apply a custom style cell by cell, check out the [Conditional Formatting section of the Theming chapter](./Theming.md#conditional-formatting.)
 
 ### Row Style Function
 

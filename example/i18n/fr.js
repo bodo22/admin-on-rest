@@ -15,6 +15,7 @@ export const messages = {
                 pictures: 'Photos associées',
                 published_at: 'Publié le',
                 teaser: 'Description',
+                tags: 'Catégories',
                 title: 'Titre',
                 views: 'Vues',
             },
@@ -28,6 +29,13 @@ export const messages = {
                 author: {
                     name: 'Auteur',
                 },
+            },
+        },
+        users: {
+            name: 'User |||| Users',
+            fields: {
+                name: 'Name',
+                role: 'Role',
             },
         },
     },
@@ -48,6 +56,18 @@ export const messages = {
     comment: {
         list: {
             about: 'Au sujet de',
+        },
+    },
+    user: {
+        list: {
+            search: 'Recherche',
+        },
+        form: {
+            summary: 'Résumé',
+            security: 'Sécurité',
+        },
+        edit: {
+            title: 'Utilisateur "%{title}"',
         },
     },
 };

@@ -15,23 +15,11 @@ title: "Ecosystem"
 - [dreinke/aor-color-input](https://github.com/dreinke/aor-color-input): a color input using [React Color](http://casesandberg.github.io/react-color/), a collection of color pickers.
 - [LoicMahieu/aor-tinymce-input](https://github.com/LoicMahieu/aor-tinymce-input): a TinyMCE component, useful for editing HTML
 - [marmelab/aor-dependent-input](https://github.com/marmelab/aor-dependent-input): conditionnaly display inputs depending on other inputs values
+- [mhdsyrwan/aor-embedded-array](https://github.com/MhdSyrwan/aor-embedded-array): Field and Input for embedded arrays.
 
 ## Translations
 
-- Chinese (`cn`): [downup2u/aor-language-chinese](https://github.com/downup2u/aor-language-chinese)
-- Chinese (Traditional) (`cht`): [leesei/aor-language-chinese-traditional](https://github.com/leesei/aor-language-chinese-traditional)
-- Czech (`cs`): [magikMaker/aor-language-czech](https://github.com/magikMaker/aor-language-czech)
-- Dutch (`nl`): [pimschaaf/aor-language-dutch](https://github.com/pimschaaf/aor-language-dutch)
-- French (`fr`): [marmelab/aor-language-french](https://github.com/marmelab/aor-language-french)
-- German (`de`): [der-On/aor-language-german](https://github.com/der-On/aor-language-german)
-- Hebrew (`he`): [mstmustisnt/aor-language-hebrew](https://github.com/mstmustisnt/aor-language-hebrew)
-- Hungarian (`hu`): [s33m4nn/aor-language-hungarian](https://github.com/s33m4nn/aor-language-hungarian)
-- Italian (`it`): [stefsava/aor-language-italian](https://github.com/stefsava/aor-language-italian)
-- Japanese (`ja`): [kuma-guy/aor-language-japanese](https://github.com/kuma-guy/aor-language-japanese)
-- Portuguese (`pt`): [movibe/aor-language-portugues](https://github.com/movibe/aor-language-portugues)
-- Russian (`ru`): [cytomich/aor-language-russian](https://github.com/cytomich/aor-language-russian)
-- Spanish (`es`): [blackboxvision/aor-language-spanish](https://github.com/BlackBoxVision/aor-language-spanish)
-- Vietnamese (`vi`): [kimkha/aor-language-vietnamese](https://github.com/kimkha/aor-language-vietnamese)
+See the [translation](./Translation.md#available-locales) page.
 
 ## Rest clients
 
@@ -42,8 +30,9 @@ title: "Ecosystem"
 - [kimkha/aor-loopback](https://github.com/kimkha/aor-loopback): a REST client works with [Loopback](http://loopback.io/)
 - [leperone/aor-parseserver-client](https://github.com/leperone/aor-parseserver-client): a REST client for [Parse Server](https://github.com/ParsePlatform/parse-server)
 - [moonlight-labs/aor-jsonapi-client](https://github.com/moonlight-labs/aor-jsonapi-client): a REST client for [JSON API](http://jsonapi.org/)
+- [mhdsyrwan/aor-rest-client-router](https://github.com/MhdSyrwan/aor-rest-client-router): a REST client that enables routing to many REST clients based on resource name.
 
 ## Miscellaneous
 
-- [marmelab/aor-permissions](https://github.com/marmelab/aor-permissions): customize UI depending on user's persmissions
 - [marmelab/aor-realtime](https://github.com/marmelab/aor-realtime): enable realtime updates
+- [zifnab87/ra-component-factory](https://github.com/zifnab87/ra-component-factory): centralized configuration of immutability/visibility of fields/menu-links/action buttons, easy re-ordering of fields/properties and tab reorganization based on permission roles

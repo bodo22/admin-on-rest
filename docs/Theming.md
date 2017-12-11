@@ -12,7 +12,7 @@ Whether you need to adjust a CSS rule for a single component, or change the colo
 Most admin-on-rest components support two style props to set inline styles:
 
 * `style`: A style object to customize the look and feel of the component container (e.g. the `<td>` in a datagrid). Most of the time, that's where you'll want to put your custom styles.
-* `elStyle`: A style object to customize the look and feel of the component element itself, usually a material ui component. Use this prop when you want to fine tune the display of a material ui component, according to [their styling documentation]((http://www.material-ui.com/#/customization/styles)).
+* `elStyle`: A style object to customize the look and feel of the component element itself, usually a material ui component. Use this prop when you want to fine tune the display of a material ui component, according to [their styling documentation](http://www.material-ui.com/#/customization/styles).
 
 These props accept a style object:
 
@@ -52,7 +52,7 @@ export const ProductList = (props) => (
 
 Refer to each component documentation for a list of supported style props.
 
-If you need more control over the HTML code, you can also create your own [Field](./Fields.html#writing-your-own-field-component) and [Input](./Inputs.html#writing-your-own-input-component) components.
+If you need more control over the HTML code, you can also create your own [Field](./Fields.md#writing-your-own-field-component) and [Input](./Inputs.md#writing-your-own-input-component) components.
 
 ## Conditional Formatting
 
@@ -122,7 +122,7 @@ export const PostList = (props) => (
 
 **Tip**: If you only provide `small` and `medium`, the `medium` element will also be used on large screens. The same kind of smart default exists for when you omit `small` or `medium`.
 
-**Tip**: You can also use [material-ui's `withWith()` higher order component](https://github.com/callemall/material-ui/blob/master/src/utils/withWidth.js) to have the `with` prop injected in your own components.
+**Tip**: You can also use [material-ui's `withWidth()` higher order component](https://github.com/callemall/material-ui/blob/master/src/utils/withWidth.js) to have the `with` prop injected in your own components.
 
 ## Using a Predefined Theme
 
@@ -220,21 +220,19 @@ Use the [default layout](https://github.com/marmelab/admin-on-rest/blob/master/s
 
 ```jsx
 // in src/MyLayout.js
-import React, { Component } from 'react';
+import React, { createElement, Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import CircularProgress from 'material-ui/CircularProgress';
-import injectTapEventPlugin from 'react-tap-event-plugin';
 import {
     AdminRoutes,
     AppBar,
-    Sidebar,
+    Menu,
     Notification,
-    setSidebarVisibility as setSidebarVisibilityAction
+    Sidebar,
+    setSidebarVisibility,
 } from 'admin-on-rest';
-
-injectTapEventPlugin();
 
 const styles = {
     wrapper: {
@@ -274,14 +272,13 @@ class MyLayout extends Component {
 
     render() {
         const {
-            authClient,
+            children,
             customRoutes,
             dashboard,
             isLoading,
+            logout,
             menu,
-            resources,
             title,
-            width,
         } = this.props;
         return (
             <MuiThemeProvider>
@@ -292,22 +289,27 @@ class MyLayout extends Component {
                             <div style={styles.content}>
                                 <AdminRoutes
                                     customRoutes={customRoutes}
-                                    resources={resources}
-                                    authClient={authClient}
                                     dashboard={dashboard}
-                                />
+                                >
+                                    {children}
+                                </AdminRoutes>
                             </div>
                             <Sidebar>
-                                {menu}
+                                {createElement(menu || Menu, {
+                                    logout,
+                                    hasDashboard: !!dashboard,
+                                })}
                             </Sidebar>
                         </div>
                         <Notification />
-                        {isLoading && <CircularProgress
-                            color="#fff"
-                            size={width === 1 ? 20 : 30}
-                            thickness={2}
-                            style={styles.loader}
-                        />}
+                        {isLoading && (
+                            <CircularProgress
+                                color="#fff"
+                                size={30}
+                                thickness={2}
+                                style={styles.loader}
+                            />
+                        )}
                     </div>
                 </div>
             </MuiThemeProvider>
@@ -324,16 +326,8 @@ MyLayout.propTypes = {
     resources: PropTypes.array,
     setSidebarVisibility: PropTypes.func.isRequired,
     title: PropTypes.string.isRequired,
-    width: PropTypes.number,
 };
 
-function mapStateToProps(state) {
-    return {
-        isLoading: state.admin.loading > 0,
-    };
-}
-
-export default connect(mapStateToProps, {
-    setSidebarVisibility: setSidebarVisibilityAction,
-})(MyLayout);
+const mapStateToProps = state => ({ isLoading: state.admin.loading > 0 });
+export default connect(mapStateToProps, { setSidebarVisibility })(MyLayout);
 ```

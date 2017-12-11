@@ -54,7 +54,7 @@ Read the [Tutorial](http://marmelab.com/admin-on-rest//Tutorial.html) for a 15 m
 
 ## At a Glance
 
-```js
+```jsx
 // in app.js
 import React from 'react';
 import { render } from 'react-dom';
@@ -72,7 +72,7 @@ render(
 
 The `<Resource>` component is a configuration component that allows to define sub components for each of the admin view: `list`, `edit`, and `create`. These components use Material UI and custom components from admin-on-rest:
 
-```js
+```jsx
 // in posts.js
 import React from 'react';
 import { List, Datagrid, Edit, Create, SimpleForm, DateField, TextField, EditButton, DisabledInput, TextInput, LongTextInput, DateInput } from 'admin-on-rest';
@@ -150,7 +150,19 @@ The credentials are **login/password**
 
 ## Contributing
 
-Pull requests are welcome. Try to follow the coding style of the existing files, and include unit tests and documentation. Be prepared for a thorough code review, and be patient for the merge - this is an open-source initiative.
+Pull requests are welcome. You must follow the coding style of the existing files (based on [prettier](https://github.com/prettier/prettier)), and include unit tests and documentation. Be prepared for a thorough code review, and be patient for the merge - this is an open-source initiative.
+
+You can run the tests (linting, unit and functional tests) by calling
+
+```sh
+make test
+```
+
+If you have coding standards problems, you can fix them automatically using `prettier` by calling
+
+```sh
+make prettier
+```
 
 If you want to contribute to the documentation, install jekyll, then call
 
@@ -161,12 +173,6 @@ make doc
 And then browse to [http://localhost:4000/](http://localhost:4000/)
 
 *Note*: if you have added a section with heading to the docs, you also have to add it to `docs/_layouts/default.html` (the links on the left) manually.
-
-You can run the unit tests by calling
-
-```sh
-make test
-```
 
 If you are using admin-on-rest as a dependency, and if you want to try and hack it, here is the advised process:
 
@@ -195,4 +201,4 @@ Admin-on-rest is licensed under the [MIT Licence](https://github.com/marmelab/ad
 
 ## Donate
 
-This library is free to use, even for commercial purpose. If you want to give back, please talk about it, help newcomers, or contribute code. But the best way to give back is to **donate to a charity**. We recommend [Doctors Without Borders](http://www.doctorswithoutborders.org/).
+This library is free to use, even for commercial purpose. If you want to give back, please talk about it, [help newcomers](https://stackoverflow.com/questions/tagged/admin-on-rest), or contribute code. But the best way to give back is to **donate to a charity**. We recommend [Doctors Without Borders](http://www.doctorswithoutborders.org/).

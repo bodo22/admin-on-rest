@@ -35,18 +35,22 @@ The `restClient` is also the ideal place to add custom HTTP headers, authenticat
 
 Admin-on-rest ships 2 REST client by default:
 
-* [simpleRestClient](#simple-rest) serves mostly as an example. Incidentally, it is compatible with the API of [FakeRest](https://github.com/marmelab/FakeRest).
-* [jsonServerRestClient](#json-server-rest) is a client compatible with [json-server](https://github.com/typicode/json-server)
+* simple REST: [simpleRestClient](#simple-rest) serves mostly as an example. Incidentally, it is compatible with the [FakeRest](https://github.com/marmelab/FakeRest) API.
+* **[JSON server](https://github.com/typicode/json-server)**: [jsonServerRestClient](#json-server-rest)
 
-You can find more REST clients for admin-on-rest in third-party repositories:
+You can find REST clients for various backends in third-party repositories:
 
-* [marmelab/aor-simple-graphql-client](https://github.com/marmelab/aor-simple-graphql-client): a GraphQL client using [Apollo](http://www.apollodata.com/)
-* [marmelab/aor-json-rest-client](https://github.com/marmelab/aor-json-rest-client): a local REST client based on a JavaScript object. It doesn't even use HTTP. Use it for testing purposes.
-* [tomberek/aor-postgrest-client](https://github.com/tomberek/aor-postgrest-client): a REST client for [Postgrest](http://postgrest.com/en/v0.4/) client
-* [josx/aor-feathers-client](https://github.com/josx/aor-feathers-client): a REST client using [Feathersjs](http://www.feathersjs.com/)
-* [kimkha/aor-loopback](https://github.com/kimkha/aor-loopback): a REST client works with [Loopback](http://loopback.io/)
-* [leperone/aor-parseserver-client](https://github.com/leperone/aor-parseserver-client): a REST client for [Parse Server](https://github.com/ParsePlatform/parse-server)
-* [moonlight-labs/aor-jsonapi-client](https://github.com/moonlight-labs/aor-jsonapi-client): a REST client for [JSON API](http://jsonapi.org/)
+* **[Epilogue](https://github.com/dchester/epilogue)**: [dunghuynh/aor-epilogue-client](https://github.com/dunghuynh/aor-epilogue-client)
+* **[Feathersjs](http://www.feathersjs.com/)**: [josx/aor-feathers-client](https://github.com/josx/aor-feathers-client)
+* **[Firebase](https://firebase.google.com/)**: [sidferreira/aor-firebase-client](https://github.com/sidferreira/aor-firebase-client)
+* **[GraphQL](http://graphql.org/)**: [marmelab/aor-simple-graphql-client](https://github.com/marmelab/aor-simple-graphql-client) (uses [Apollo](http://www.apollodata.com/))
+* **[JSON API](http://jsonapi.org/)**: [moonlight-labs/aor-jsonapi-client](https://github.com/moonlight-labs/aor-jsonapi-client)
+* Local JSON: [marmelab/aor-json-rest-client](https://github.com/marmelab/aor-json-rest-client). It doesn't even use HTTP. Use it for testing purposes.
+* **[Loopback](http://loopback.io/)**: [kimkha/aor-loopback](https://github.com/kimkha/aor-loopback)
+* **[Parse Server](https://github.com/ParsePlatform/parse-server)**: [leperone/aor-parseserver-client](https://github.com/leperone/aor-parseserver-client)
+* **[PostgREST](http://postgrest.com/en/v0.4/)**: [tomberek/aor-postgrest-client](https://github.com/tomberek/aor-postgrest-client)
+
+If you've written a REST client for another backend, and open-sourced it, please help complete this list with your package.
 
 ### Simple REST
 
@@ -169,7 +173,7 @@ Now all the requests to the REST API will contain the `X-Custom-Header: foobar` 
 **Tip**: The most common usage of custom headers is for authentication. `fetchJson` has built-on support for the `Authorization` token header:
 
 ```jsx
-const httpClient = (url, options) => {
+const httpClient = (url, options = {}) => {
     options.user = {
         authenticated: true,
         token: 'SRTRDFVESGNJYTUKTYTHRG'
@@ -266,8 +270,8 @@ Type                 | Params format
 `GET_LIST`           | `{ pagination: { page: {int} , perPage: {int} }, sort: { field: {string}, order: {string} }, filter: {Object} }`
 `GET_ONE`            | `{ id: {mixed} }`
 `CREATE`             | `{ data: {Object} }`
-`UPDATE`             | `{ id: {mixed}, data: {Object} }`
-`DELETE`             | `{ id: {mixed} }`
+`UPDATE`             | `{ id: {mixed}, data: {Object}, previousData: {Object} }`
+`DELETE`             | `{ id: {mixed}, previousData: {Object} }`
 `GET_MANY`           | `{ ids: {mixed[]} }`
 `GET_MANY_REFERENCE` | `{ target: {string}, id: {mixed}, pagination: { page: {int} , perPage: {int} }, sort: { field: {string}, order: {string} }, filter: {Object} }`
 
@@ -280,9 +284,16 @@ restClient(GET_LIST, 'posts', {
     filter: { author_id: 12 },
 });
 restClient(GET_ONE, 'posts', { id: 123 });
-restClient(CREATE, 'posts', { title: "hello, world" });
-restClient(UPDATE, 'posts', { id: 123, { title: "hello, world!" } });
-restClient(DELETE, 'posts', { id: 123 });
+restClient(CREATE, 'posts', { data: { title: "hello, world" } });
+restClient(UPDATE, 'posts', {
+    id: 123,
+    data: { title: "hello, world!" },
+    previousData: { title: "previous title" }
+});
+restClient(DELETE, 'posts', {
+    id: 123,
+    previousData: { title: "hello, world" }
+});
 restClient(GET_MANY, 'posts', { ids: [123, 124, 125] });
 restClient(GET_MANY_REFERENCE, 'comments', {
     target: 'post_id',
@@ -333,19 +344,26 @@ restClient(GET_ONE, 'posts', { id: 123 })
 //     data: { id: 123, title: "hello, world" }
 // }
 
-restClient(CREATE, 'posts', { title: "hello, world" })
+restClient(CREATE, 'posts', { data: { title: "hello, world" } })
 .then(response => console.log(response));
 // {
 //     data: { id: 450, title: "hello, world" }
 // }
 
-restClient(UPDATE, 'posts', { id: 123, { title: "hello, world!" } })
+restClient(UPDATE, 'posts', {
+    id: 123,
+    data: { title: "hello, world!" },
+    previousData: { title: "previous title" }
+})
 .then(response => console.log(response));
 // {
 //     data: { id: 123, title: "hello, world!" }
 // }
 
-restClient(DELETE, 'posts', { id: 123 })
+restClient(DELETE, 'posts', {
+    id: 123,
+    previousData: { title: "hello, world!" }
+})
 .then(response => console.log(response));
 // {
 //     data: { id: 123, title: "hello, world" }

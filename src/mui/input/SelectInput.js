@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import get from 'lodash.get';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 
@@ -64,56 +65,99 @@ import FieldTitle from '../../util/FieldTitle';
  * The object passed as `options` props is passed to the material-ui <SelectField> component
  */
 export class SelectInput extends Component {
-    handleChange = (event, index, value) => this.props.input.onChange(value);
+    /*
+     * Using state to bypass a redux-form comparison but which prevents re-rendering
+     * @see https://github.com/erikras/redux-form/issues/2456
+     */
+    state = {
+        value: this.props.input.value,
+    };
 
-    renderMenuItem = (choice) => {
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.input.value !== this.props.input.value) {
+            this.setState({ value: nextProps.input.value });
+        }
+    }
+
+    handleChange = (event, index, value) => {
+        this.props.input.onChange(value);
+        this.setState({ value });
+    };
+
+    addAllowEmpty = choices => {
+        if (this.props.allowEmpty) {
+            return [
+                <MenuItem value={null} key="null" primaryText="" />,
+                ...choices,
+            ];
+        }
+
+        return choices;
+    };
+
+    renderMenuItem = choice => {
         const {
             optionText,
             optionValue,
             translate,
             translateChoice,
         } = this.props;
-        const choiceName = React.isValidElement(optionText) ? // eslint-disable-line no-nested-ternary
-            React.cloneElement(optionText, { record: choice }) :
-            (typeof optionText === 'function' ?
-                optionText(choice) :
-                choice[optionText]
-            );
+        const choiceName = React.isValidElement(optionText) // eslint-disable-line no-nested-ternary
+            ? React.cloneElement(optionText, { record: choice })
+            : typeof optionText === 'function'
+              ? optionText(choice)
+              : get(choice, optionText);
         return (
             <MenuItem
-                key={choice[optionValue]}
-                primaryText={translateChoice ? translate(choiceName, { _: choiceName }) : choiceName}
-                value={choice[optionValue]}
+                key={get(choice, optionValue)}
+                primaryText={
+                    translateChoice ? (
+                        translate(choiceName, { _: choiceName })
+                    ) : (
+                        choiceName
+                    )
+                }
+                value={get(choice, optionValue)}
             />
         );
-    }
+    };
 
     render() {
         const {
-            allowEmpty,
             choices,
             elStyle,
-            input,
+            isRequired,
             label,
-            meta: { touched, error },
+            meta,
             options,
             resource,
             source,
         } = this.props;
+        if (typeof meta === 'undefined') {
+            throw new Error(
+                "The SelectInput component wasn't called within a redux-form <Field>. Did you decorate it and forget to add the addField prop to your component? See https://marmelab.com/admin-on-rest/Inputs.html#writing-your-own-input-component for details."
+            );
+        }
+        const { touched, error } = meta;
+
         return (
             <SelectField
-                value={input.value}
-                floatingLabelText={<FieldTitle label={label} source={source} resource={resource} />}
+                value={this.state.value}
+                floatingLabelText={
+                    <FieldTitle
+                        label={label}
+                        source={source}
+                        resource={resource}
+                        isRequired={isRequired}
+                    />
+                }
                 onChange={this.handleChange}
                 autoWidth
                 style={elStyle}
                 errorText={touched && error}
                 {...options}
             >
-                {allowEmpty &&
-                    <MenuItem value={null} primaryText="" />
-                }
-                {choices.map(this.renderMenuItem)}
+                {this.addAllowEmpty(choices.map(this.renderMenuItem))}
             </SelectField>
         );
     }
@@ -125,6 +169,7 @@ SelectInput.propTypes = {
     choices: PropTypes.arrayOf(PropTypes.object),
     elStyle: PropTypes.object,
     input: PropTypes.object,
+    isRequired: PropTypes.bool,
     label: PropTypes.string,
     meta: PropTypes.object,
     options: PropTypes.object,

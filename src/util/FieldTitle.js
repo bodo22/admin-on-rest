@@ -6,21 +6,29 @@ import compose from 'recompose/compose';
 
 import translate from '../i18n/translate';
 
-const FieldTitle = ({ resource, source, label, translate }) => (
+export const FieldTitle = ({
+    resource,
+    source,
+    label,
+    isRequired,
+    translate,
+}) => (
     <span>
-        {typeof label !== 'undefined' ?
+        {typeof label !== 'undefined' ? (
             translate(label, { _: label })
-            :
-            (typeof source !== 'undefined' ?
-                translate(`resources.${resource}.fields.${source}`, { _: inflection.humanize(source) })
-                :
-                ''
-            )
-        }
+        ) : typeof source !== 'undefined' ? (
+            translate(`resources.${resource}.fields.${source}`, {
+                _: inflection.humanize(source),
+            })
+        ) : (
+            ''
+        )}
+        {isRequired && ' *'}
     </span>
 );
 
 FieldTitle.propTypes = {
+    isRequired: PropTypes.bool,
     resource: PropTypes.string,
     source: PropTypes.string,
     label: PropTypes.string,
